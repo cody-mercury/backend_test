@@ -1,0 +1,31 @@
+[package]
+name = "dex-aggregator"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+axum = { version = "0.8", features = ["macros"]}
+tokio = { version = "1.0", features = ["full"] }
+reqwest = { version = "0.12", features = ["json"] }
+serde = { version = "1.0", features = ["derive"] }
+moka = { version = "0.12", features = ["sync"] } # For caching
+governor = "0.6" # For rate limiting
+chrono = { version = "0.4", features = ["serde"] }
+uuid = { version = "1.0", features = ["v4"] }
+tokio-test = "0.4" # For testing
+mockito = "1.7.0" # For HTTP mocking
+tower-http = { version = "0.4", features = ["cors", "trace"] }
+utoipa = { version = "3.0" }
+utoipa-swagger-ui = { version = "3.0", features = ["axum"] }
+serde_json = "1.0.140"
+# blockchain crates
+alloy-core = "1.0.0"
+alloy-provider = "0.15.2"
+alloy-sol-types = "1.0.0"
+alloy-rpc-types-eth = "0.15.2"
+alloy-contract = "0.15.2"
+alloy-primitives = "1.0.0"
+axum-test = "17.3.0"
+alloy = "0.15.7"
+anyhow = "1.0.98"
+hex = "0.4.3"
