@@ -84,6 +84,34 @@ async fn main() {
 
 #[tokio::test]
 async fn test_main() {
-    // TODO
-    
+    let client = reqwest::Client::new();
+    let request = PriceRequest{
+        input_token: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2".to_string(),
+        output_token: "0xdAC17F958D2ee523a2206206994597C13D831ec7".to_string(),
+        amount: U256::from(2e18),
+    };
+    let response = client.post("http://127.0.0.1:3000/price").json(&request).send().await.unwrap();
+    assert!(response.status() == reqwest::StatusCode::OK);
+    let result = response.json::<PriceResponse>().await.unwrap();
+    println!("best price is {}", result.best_price);
+
+
+    let pair_addr = client.get("http://127.0.0.1:3000/get-sushi-pair").query(&[("from_token", "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), ("to_token", "0xdAC17F958D2ee523a2206206994597C13D831ec7")]).send().await.unwrap();
+    let mut pair = pair_addr.json::<PairResponse>().await.unwrap();
+    println!("pair address is: {:?}", pair);
+
+
+    let pair_addr = client.get("http://127.0.0.1:3000/get-uni-pair").query(&[("from_token", "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2"), ("to_token", "0xdAC17F958D2ee523a2206206994597C13D831ec7")]).send().await.unwrap();
+    pair = pair_addr.json::<PairResponse>().await.unwrap();
+    println!("pair address is: {:?}", pair);
+
+
+
+    let rpc_url = "https://rpc.ankr.com/eth";
+    let swap_event = "Swap(address,uint256,uint256,uint256,uint256,address)";
+    let swap_hash = keccak256(swap_event.as_bytes());
+    let history_response = client.get("http://127.0.0.1:3000/history").query(&[("pair", pair.pair_address.to_string()), ("event_sig", swap_hash.to_string())]).send().await.unwrap();
+    // println!("history response is: {:?}", history_response);
+    let history = history_response.json::<Vec<HistoricalSwap>>().await.unwrap();
+    println!("history response is: {:?}", history);
 }
